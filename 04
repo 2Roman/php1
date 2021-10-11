@@ -1,0 +1,29 @@
+<?php
+	$h1 = 'h1 h1 h1';
+	$title = 'Заголовок страницы';
+	$year = date('Y');
+?>
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title><?= $title ?></title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<h1><?= $h1 ?></h1>
+
+<nav>Меню навигации</nav>
+
+<aside>Боковая колонка SideBar</aside>
+
+<article>
+ Контент - основное содержимое страницы.
+</article>
+
+<footer><?= $year ?></footer>
+
+</body>
+</html>
