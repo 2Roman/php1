@@ -1,23 +1,34 @@
 <?php
-  $upload_error;
-  $upload_message;
-  $uploaddir = '/var/www/html/lesson-4/uploads/';
-  $uploadfile = $uploaddir . basename( $_FILES['userfile']['name'] );
 
-  if ( $_FILES['userfile']['name'] ) {
-    if ( $_FILES['userfile']['error'] !== UPLOAD_ERR_OK ) {
-      $upload_error = 'Ошибка загрузки файла';
-    } elseif ( $_FILES['userfile']['size'] == 0 || $_FILES['userfile']['size'] > 1_000_000 ) {
-      $upload_error = 'Попытка загрузить пустой файл или превышен максималный размер файла';
-    } elseif ( !is_uploaded_file( $_FILES['userfile']['tmp_name'] ) ) {
-      $upload_error = "Возможная атака с участием загрузки файла: ";
-      $upload_error .= "файл '". $_FILES['userfile']['tmp_name'] . "'.";
-    } elseif ( move_uploaded_file( $_FILES['userfile']['tmp_name'], $uploadfile ) ) {
-      $upload_message = "Файл корректен и был успешно загружен.";
-    } else {
-      $upload_message = "Возможная атака с помощью файловой загрузки!";
-    }
-  }
+	function get_upload_file()
+	{
+		if ( !isset( $_FILES['userfile'] ) )
+			return [ null, null ];
+
+		$uploaddir = '/var/www/html/lesson-4/uploads/';
+		$uploadfile = $uploaddir . basename( $_FILES['userfile']['name'] );
+
+		if ( $_FILES['userfile']['error'] !== UPLOAD_ERR_OK ) {
+			$upload_error = 'Ошибка загрузки файла';
+		} elseif ( $_FILES['userfile']['size'] == 0 || $_FILES['userfile']['size'] > 1_000_000 ) {
+			# тут не делю на отдельные сообщения, для урока, надеюсь, достаточно)
+			var_dump($_FILES['userfile']['size']);
+			$upload_error = 'Попытка загрузить пустой файл или превышен максималный размер файла';
+		} elseif ( $_FILES['userfile']['type'] != 'image/jpeg' ) {
+			$upload_error = 'Неверный тип файла, поддерживается только "image/jpeg"';
+		} elseif ( !is_uploaded_file( $_FILES['userfile']['tmp_name'] ) ) {
+			$upload_error = "Возможная атака с участием загрузки файла: ";
+			$upload_error .= "файл '". $_FILES['userfile']['tmp_name'] . "'.";
+		} elseif ( move_uploaded_file( $_FILES['userfile']['tmp_name'], $uploadfile ) ) {
+			$upload_message = "Файл корректен и был успешно загружен.";
+		} else {
+			$upload_message = "Возможная атака с помощью файловой загрузки!";
+		}
+
+		return [ $upload_error ?? null, $upload_message ];
+	}
+
+	[ $upload_error, $upload_message ] = get_upload_file();
 ?>
 
 <!doctype html>
